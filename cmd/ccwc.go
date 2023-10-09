@@ -34,8 +34,66 @@ to quickly create a Cobra application.`,
 	},
 }
 
+var countLineCmd = &cobra.Command{
+	Use:   "cl",
+	Short: "Counts the number of lines in a file",
+	Long: `A longer description that spans multiple lines and likely contains examples
+and usage of using your command. For example:
+
+Cobra is a CLI library for Go that empowers applications.
+This application is a tool to generate the needed files
+to quickly create a Cobra application.`,
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println("countLine called")
+		flagValue, _ := cmd.Flags().GetString("l")
+		if flagValue != "" {
+			file, err := os.Stat(flagValue)
+			if err != nil {
+				fmt.Println("Error in Getting File, Please check the path")
+			}
+			reader, _ := os.ReadFile(flagValue)
+			content := string(reader)
+			fmt.Println(content)
+			lineCount := 0
+			fmt.Println(file, " ", flagValue)
+
+			for _, a := range content {
+				if a == '\n' {
+					fmt.Println(a)
+					lineCount++
+				}
+			}
+			fmt.Println(lineCount)
+		}
+
+	},
+}
+
+var countwords = &cobra.Command{
+	Use:   "wc",
+	Short: "Count words in a file",
+	Long:  "",
+	Run: func(cmd *cobra.Command, args []string) {
+		flagValue, _ := cmd.Flags().GetString("w")
+		if flagValue != "" {
+			reader, _ := os.ReadFile(flagValue)
+			content := string(reader)
+			wordCount := 0
+			contentWithSpace := content + " "
+			for _, a := range contentWithSpace {
+				if a == ' ' {
+					wordCount++
+				}
+			}
+			fmt.Println(wordCount)
+		}
+	},
+}
+
 func init() {
 	rootCmd.AddCommand(ccwcCmd)
+	rootCmd.AddCommand(countLineCmd)
+	rootCmd.AddCommand(countwords)
 
 	// Here you will define your flags and configuration settings.
 
@@ -43,8 +101,6 @@ func init() {
 	// and all subcommands, e.g.:
 	ccwcCmd.PersistentFlags().String("foo", "", "A help for foo")
 	ccwcCmd.PersistentFlags().String("s", "", "Gives the Number of Bytes in a File")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// ccwcCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	countLineCmd.PersistentFlags().String("l", "", "Counts the Number of Lines in a file")
+	countwords.PersistentFlags().String("w", "", "Count words in a file")
 }
